@@ -1,0 +1,158 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Noto+Serif+JP:wght@300;400&display=swap');
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: auto;
+}
+
+body {
+  font-family: 'Cormorant Garamond', 'Noto Serif JP', serif;
+  background: #0a0a0a;
+  color: #fff;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+#canvas-container {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+}
+
+#canvas-container canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+#scroll-container {
+  position: relative;
+  z-index: 1;
+  pointer-events: none;
+}
+
+#scroll-container .scene-section {
+  pointer-events: none;
+}
+
+#ui-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+}
+
+#story-word {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.95);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(3rem, 12vw, 10rem);
+  font-weight: 300;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0);
+  transition: color 2s ease, transform 2s ease, text-shadow 2s ease;
+  text-indent: 0.3em;
+}
+
+#story-word.visible {
+  color: rgba(255, 255, 255, 0.12);
+  transform: translate(-50%, -50%) scale(1);
+  text-shadow: 0 0 80px rgba(255, 200, 150, 0.15);
+}
+
+#legacy-word {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(4rem, 15vw, 12rem);
+  font-weight: 300;
+  letter-spacing: 0.5em;
+  text-indent: 0.5em;
+  color: rgba(255, 255, 255, 0);
+  transition: color 3s ease, letter-spacing 3s ease;
+}
+
+#legacy-word.visible {
+  color: rgba(255, 255, 255, 0.9);
+  letter-spacing: 0.6em;
+}
+
+#scroll-hint {
+  position: fixed;
+  bottom: 2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  opacity: 0.5;
+  transition: opacity 1s ease;
+  animation: pulse 2.5s ease-in-out infinite;
+}
+
+#scroll-hint.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#scroll-hint span {
+  font-size: 0.7rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+#scroll-hint .line {
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.4));
+  animation: scrollLine 2s ease-in-out infinite;
+}
+
+#audio-notice {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.25);
+  pointer-events: none;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.6; }
+}
+
+@keyframes scrollLine {
+  0% { transform: scaleY(0); transform-origin: top; }
+  50% { transform: scaleY(1); transform-origin: top; }
+  51% { transform: scaleY(1); transform-origin: bottom; }
+  100% { transform: scaleY(0); transform-origin: bottom; }
+}
+
+@media (max-width: 768px) {
+  #story-word {
+    letter-spacing: 0.15em;
+    text-indent: 0.15em;
+  }
+
+  #legacy-word {
+    letter-spacing: 0.3em;
+    text-indent: 0.3em;
+  }
+}

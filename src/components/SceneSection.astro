@@ -1,0 +1,66 @@
+---
+interface Props {
+  index: number;
+  title: string;
+  subtitle?: string;
+}
+
+const { index, title, subtitle } = Astro.props;
+---
+
+<section class="scene-section" data-scene={index} aria-label={title}>
+  <div class="scene-marker">
+    <span class="scene-number">{String(index).padStart(2, '0')}</span>
+    <h2 class="scene-title">{title}</h2>
+    {subtitle && <p class="scene-subtitle">{subtitle}</p>}
+  </div>
+</section>
+
+<style>
+  .scene-section {
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-end;
+    padding: 4rem;
+    pointer-events: none;
+  }
+
+  .scene-marker {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 1.2s ease, transform 1.2s ease;
+  }
+
+  .scene-section:in-view .scene-marker,
+  .scene-section:focus-within .scene-marker {
+    opacity: 0.15;
+    transform: translateY(0);
+  }
+
+  .scene-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.4em;
+    color: rgba(255, 255, 255, 0.4);
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .scene-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.5rem, 3vw, 2.5rem);
+    font-weight: 300;
+    letter-spacing: 0.2em;
+    color: rgba(255, 255, 255, 0.25);
+    margin: 0;
+    text-transform: uppercase;
+  }
+
+  .scene-subtitle {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.15);
+    margin-top: 0.5rem;
+    letter-spacing: 0.1em;
+  }
+</style>

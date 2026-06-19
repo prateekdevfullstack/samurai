@@ -53,9 +53,9 @@ export class SceneManager {
   private sceneGroups: Record<string, THREE.Group> = {};
   private fogColor = new THREE.Color(0xc8d8c8);
   private backgroundColor = new THREE.Color(0x87a898);
-  private rainOverlay: THREE.Mesh;
-  private sakuraOverlay: THREE.Mesh;
-  private inkOverlay: THREE.Mesh;
+  private rainOverlay!: THREE.Mesh;
+  private sakuraOverlay!: THREE.Mesh;
+  private inkOverlay!: THREE.Mesh;
   private smokePlanes: THREE.Mesh[] = [];
   private firePlanes: THREE.Mesh[] = [];
 
@@ -79,9 +79,19 @@ export class SceneManager {
     this.embers = this.scene.getObjectByName('embers') as THREE.Points;
     this.birds = this.scene.getObjectByName('birds') as THREE.Group;
 
-    this.rainOverlay = this.scene.getObjectByName('rainOverlay') as THREE.Mesh;
-    this.sakuraOverlay = this.scene.getObjectByName('sakuraOverlay') as THREE.Mesh;
-    this.inkOverlay = this.scene.getObjectByName('inkOverlay') as THREE.Mesh;
+    this.shaders.rain = (this.rainOverlay.material as THREE.ShaderMaterial);
+    this.shaders.sakura = (this.sakuraOverlay.material as THREE.ShaderMaterial);
+    this.shaders.ink = (this.inkOverlay.material as THREE.ShaderMaterial);
+  }
+
+  private attachOverlayToCamera(overlay: THREE.Mesh): void {
+    const distance = 3;
+    const fov = (this.camera.camera.fov * Math.PI) / 180;
+    const height = 2 * Math.tan(fov / 2) * distance;
+    const width = height * this.camera.camera.aspect;
+    overlay.scale.set(width * 1.2, height * 1.2, 1);
+    overlay.position.set(0, 0, -distance);
+    this.camera.camera.add(overlay);
   }
 
   private buildWorld(): void {
@@ -166,16 +176,16 @@ export class SceneManager {
     this.scene.add(duel);
 
     const rainMat = createRainMaterial();
-    const rainOverlay = createFullscreenQuad(rainMat, 'rainOverlay');
-    this.scene.add(rainOverlay);
+    this.rainOverlay = createFullscreenQuad(rainMat, 'rainOverlay');
+    this.attachOverlayToCamera(this.rainOverlay);
 
     const sakuraMat = createSakuraMaterial();
-    const sakuraOverlay = createFullscreenQuad(sakuraMat, 'sakuraOverlay');
-    this.scene.add(sakuraOverlay);
+    this.sakuraOverlay = createFullscreenQuad(sakuraMat, 'sakuraOverlay');
+    this.attachOverlayToCamera(this.sakuraOverlay);
 
     const inkMat = createInkMaterial();
-    const inkOverlay = createFullscreenQuad(inkMat, 'inkOverlay');
-    this.scene.add(inkOverlay);
+    this.inkOverlay = createFullscreenQuad(inkMat, 'inkOverlay');
+    this.attachOverlayToCamera(this.inkOverlay);
 
     const sparks = createSparkBurst();
     sparks.name = 'sparks';

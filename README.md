@@ -1,43 +1,65 @@
-# Astro Starter Kit: Minimal
+# The Last Samurai
 
-```sh
-npm create astro@latest -- --template minimal
+An immersive, scroll-driven cinematic web experience built with Astro, Three.js, GSAP, and custom GLSL shaders.
+
+## Quick Start
+
+```bash
+npm install
+npm run dev
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Open [http://localhost:4321](http://localhost:4321) and scroll to experience the journey.
 
-## 🚀 Project Structure
+## Controls
 
-Inside of your Astro project, you'll see the following folders and files:
+- **Scroll** — Primary narrative driver (camera, animations, scene transitions)
+- **Mouse** — Subtle camera parallax
+- **Click** — Katana slash effect with sparks and sound
+- **A / D** — Subtle lateral camera drift (optional)
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+## Tech Stack
+
+- Astro 6
+- Three.js with post-processing (Bloom, SSAO, vignette)
+- GSAP + ScrollTrigger
+- Custom GLSL shaders (fog, fire, smoke, rain, sakura, wind, water, ink)
+- Web Audio API procedural soundtrack
+
+## Project Structure
+
+```
+src/
+├── components/     Scene1–7.astro scroll sections
+├── three/          Renderer, Camera, Lights, SceneManager, shaders
+├── shaders/        GLSL effect files
+├── animations/     Timeline, scroll controller, camera animations
+├── audio/          Procedural audio manager
+└── experience.ts   Main entry point
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## Adding Assets
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+Place compressed GLB models in `public/assets/`:
 
-Any static assets, like images, can be placed in the `public/` directory.
+- `katana.glb`, `samurai.glb`, `battlefield.glb`, `temple.glb`
 
-## 🧞 Commands
+The loader falls back to procedural geometry when assets are missing.
 
-All commands are run from the root of the project, from a terminal:
+Place audio files in `public/audio/`:
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+- `ambience.mp3`, `drums.mp3`, `battle.mp3`, `flute.mp3`
 
-## 👀 Want to learn more?
+## Build
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+```bash
+npm run build
+npm run preview
+```
+
+## Performance
+
+- InstancedMesh for bamboo, grass, and battle flags
+- Frustum culling enabled by default
+- Pixel ratio capped at 2×
+- Lazy asset loading with procedural fallbacks

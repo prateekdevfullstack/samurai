@@ -1,17 +1,59 @@
 ---
-
+import '../styles/global.css';
+import Scene1 from '../components/Scene1.astro';
+import Scene2 from '../components/Scene2.astro';
+import Scene3 from '../components/Scene3.astro';
+import Scene4 from '../components/Scene4.astro';
+import Scene5 from '../components/Scene5.astro';
+import Scene6 from '../components/Scene6.astro';
+import Scene7 from '../components/Scene7.astro';
 ---
 
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="The Last Samurai — An immersive cinematic scroll experience. Honor. Loyalty. Sacrifice. Legacy."
+    />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>The Last Samurai</title>
+  </head>
+  <body>
+    <div id="canvas-container">
+      <canvas id="experience-canvas"></canvas>
+    </div>
+
+    <div id="ui-layer">
+      <div id="story-word" aria-live="polite"></div>
+      <div id="legacy-word">Legacy</div>
+      <div id="scroll-hint">
+        <span>Scroll to begin</span>
+        <div class="line"></div>
+      </div>
+      <div id="audio-notice">Click to unsheathe</div>
+    </div>
+
+    <main id="scroll-container">
+      <Scene1 />
+      <Scene2 />
+      <Scene3 />
+      <Scene4 />
+      <Scene5 />
+      <Scene6 />
+      <Scene7 />
+    </main>
+
+    <script>
+      import { initExperience } from '../experience';
+
+      const canvas = document.getElementById('experience-canvas') as HTMLCanvasElement;
+      const scrollContainer = document.getElementById('scroll-container') as HTMLElement;
+
+      if (canvas && scrollContainer) {
+        initExperience(canvas, scrollContainer);
+      }
+    </script>
+  </body>
 </html>

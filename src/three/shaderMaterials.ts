@@ -6,6 +6,7 @@ import rainFrag from '../shaders/rain.glsl?raw';
 import sakuraFrag from '../shaders/sakura.glsl?raw';
 import waterFrag from '../shaders/water.glsl?raw';
 import inkFrag from '../shaders/ink.glsl?raw';
+import { GOT } from './palette';
 
 const basicVert = /* glsl */ `
   varying vec2 vUv;
@@ -43,11 +44,15 @@ const windVert = /* glsl */ `
 
 const grassFrag = /* glsl */ `
   uniform vec3 uColor;
+  uniform vec3 uTipColor;
   varying vec2 vUv;
 
   void main() {
     float tip = smoothstep(0.0, 1.0, vUv.y);
-    vec3 col = mix(uColor * 0.6, uColor * 1.2, tip);
+    vec3 base = uColor * 0.55;
+    vec3 top = uTipColor * 1.15;
+    vec3 col = mix(base, top, tip);
+    col += vec3(0.08, 0.05, 0.0) * tip * tip;
     gl_FragColor = vec4(col, 1.0);
   }
 `;
@@ -58,6 +63,7 @@ export function createWindGrassMaterial(color: number, strength = 0.3): THREE.Sh
       uTime: { value: 0 },
       uStrength: { value: strength },
       uColor: { value: new THREE.Color(color) },
+      uTipColor: { value: new THREE.Color(GOT.grassTip) },
     },
     vertexShader: windVert,
     fragmentShader: grassFrag,
@@ -111,7 +117,7 @@ export function createSakuraMaterial(): THREE.ShaderMaterial {
     uniforms: {
       uTime: { value: 0 },
       uIntensity: { value: 0 },
-      uColor: { value: new THREE.Color(0xffb7c5) },
+      uColor: { value: new THREE.Color(GOT.sakura) },
     },
     vertexShader: basicVert,
     fragmentShader: sakuraFrag,
@@ -125,8 +131,8 @@ export function createWaterMaterial(): THREE.ShaderMaterial {
     uniforms: {
       uTime: { value: 0 },
       uFlowSpeed: { value: 0.15 },
-      uWaterColor: { value: new THREE.Color(0x4a8a9a) },
-      uDeepColor: { value: new THREE.Color(0x1a3a4a) },
+      uWaterColor: { value: new THREE.Color(GOT.water) },
+      uDeepColor: { value: new THREE.Color(GOT.waterDeep) },
     },
     vertexShader: basicVert,
     fragmentShader: waterFrag,
@@ -139,7 +145,7 @@ export function createInkMaterial(): THREE.ShaderMaterial {
     uniforms: {
       uTime: { value: 0 },
       uProgress: { value: 0 },
-      uInkColor: { value: new THREE.Color(0x0a0a0a) },
+      uInkColor: { value: new THREE.Color(GOT.ink) },
     },
     vertexShader: basicVert,
     fragmentShader: inkFrag,
@@ -167,7 +173,9 @@ export function createKatanaGlowMaterial(): THREE.ShaderMaterial {
         float fresnel = pow(1.0 - abs(dot(vNormal, vec3(0.0, 0.0, 1.0))), 3.0);
         float shimmer = sin(uTime * 4.0 + vUv.y * 20.0) * 0.5 + 0.5;
         float glow = fresnel * (0.3 + uGlow * 0.7 + uHover * 0.5) * shimmer;
-        vec3 col = mix(vec3(0.7, 0.75, 0.8), vec3(1.0, 0.95, 0.9), glow);
+        vec3 steel = vec3(0.75, 0.78, 0.82);
+        vec3 gold = vec3(1.0, 0.85, 0.55);
+        vec3 col = mix(steel, gold, glow);
         gl_FragColor = vec4(col, 1.0);
       }
     `,
@@ -238,6 +246,10 @@ export function updateShaders(registry: ShaderRegistry, time: number, progress: 
 
   registry.sakura.uniforms.uTime.value = time;
   registry.sakura.uniforms.uIntensity.value = phase > 1.5 && phase < 3.5 ? 1 : 0;
+  if (registry.sakura.uniforms.uColor) {
+    const petalColor = phase > 2 && phase < 3 ? GOT.maple : GOT.sakura;
+    registry.sakura.uniforms.uColor.value.setHex(petalColor);
+  }
 
   registry.ink.uniforms.uTime.value = time;
   registry.ink.uniforms.uProgress.value = phase > 5 ? (phase - 5) * 2 : 0;

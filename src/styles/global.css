@@ -31,7 +31,7 @@ html.lenis body {
 
 body {
   font-family: 'Cormorant Garamond', 'Noto Serif JP', serif;
-  background: #0a0a0a;
+  background: #c8a060;
   color: #fff;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
@@ -82,9 +82,9 @@ body {
 }
 
 #story-word.visible {
-  color: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 240, 210, 0.14);
   transform: translate(-50%, -50%) scale(1);
-  text-shadow: 0 0 80px rgba(255, 200, 150, 0.15);
+  text-shadow: 0 0 100px rgba(255, 180, 80, 0.25);
 }
 
 #legacy-word {
@@ -102,8 +102,9 @@ body {
 }
 
 #legacy-word.visible {
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(220, 230, 240, 0.92);
   letter-spacing: 0.6em;
+  text-shadow: 0 0 60px rgba(160, 180, 200, 0.3);
 }
 
 #scroll-hint {
@@ -129,13 +130,13 @@ body {
   font-size: 0.7rem;
   letter-spacing: 0.35em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 230, 190, 0.55);
 }
 
 #scroll-hint .line {
   width: 1px;
   height: 40px;
-  background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.4));
+  background: linear-gradient(to bottom, transparent, rgba(255, 200, 120, 0.5));
   animation: scrollLine 2s ease-in-out infinite;
 }
 
@@ -146,7 +147,7 @@ body {
   font-size: 0.65rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.25);
+  color: rgba(255, 220, 160, 0.35);
   pointer-events: none;
 }
 

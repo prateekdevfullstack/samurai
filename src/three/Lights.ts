@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { lerpScenePalette } from './palette';
 
 export interface LightRig {
   ambient: THREE.AmbientLight;
@@ -9,11 +10,11 @@ export interface LightRig {
 }
 
 export function createLights(scene: THREE.Scene): LightRig {
-  const ambient = new THREE.AmbientLight(0x4a6a5a, 0.4);
+  const ambient = new THREE.AmbientLight(0x5a7a48, 0.45);
   scene.add(ambient);
 
-  const sun = new THREE.DirectionalLight(0xffd4a0, 1.2);
-  sun.position.set(8, 15, 6);
+  const sun = new THREE.DirectionalLight(0xffb84d, 1.6);
+  sun.position.set(12, 8, 10);
   sun.castShadow = true;
   sun.shadow.mapSize.set(2048, 2048);
   sun.shadow.camera.near = 0.5;
@@ -22,17 +23,18 @@ export function createLights(scene: THREE.Scene): LightRig {
   sun.shadow.camera.right = 25;
   sun.shadow.camera.top = 25;
   sun.shadow.camera.bottom = -25;
+  sun.shadow.bias = -0.0005;
   scene.add(sun);
 
-  const rim = new THREE.DirectionalLight(0x88aacc, 0.5);
-  rim.position.set(-10, 5, -8);
+  const rim = new THREE.DirectionalLight(0xffa060, 0.7);
+  rim.position.set(-12, 6, -10);
   scene.add(rim);
 
-  const fill = new THREE.PointLight(0xffaa66, 0.6, 30);
-  fill.position.set(-3, 3, 5);
+  const fill = new THREE.PointLight(0xffc878, 0.5, 35);
+  fill.position.set(-4, 4, 6);
   scene.add(fill);
 
-  const katanaGlow = new THREE.PointLight(0xffffff, 0, 8);
+  const katanaGlow = new THREE.PointLight(0xffe8c0, 0, 10);
   katanaGlow.position.set(0, 0.5, 0);
   scene.add(katanaGlow);
 
@@ -40,31 +42,25 @@ export function createLights(scene: THREE.Scene): LightRig {
 }
 
 export function updateLights(lights: LightRig, progress: number): void {
-  const scenePhase = progress * 7;
-  const phase = Math.floor(scenePhase);
-  const local = scenePhase - phase;
+  const phase = progress * 7;
+  const palette = lerpScenePalette(phase);
 
-  const palettes = [
-    { sun: 0xffd4a0, ambient: 0x4a6a5a, sunInt: 1.2, ambInt: 0.4 }, // Dawn - gold/green
-    { sun: 0xffc870, ambient: 0x5a7a6a, sunInt: 1.0, ambInt: 0.35 }, // Preparation
-    { sun: 0xffaa55, ambient: 0x6a5a4a, sunInt: 1.3, ambInt: 0.4 }, // Journey - amber
-    { sun: 0xcc4422, ambient: 0x2a1a1a, sunInt: 0.6, ambInt: 0.2 }, // Battlefield - crimson
-    { sun: 0xff6633, ambient: 0x1a1010, sunInt: 0.8, ambInt: 0.15 }, // Duel
-    { sun: 0xffffff, ambient: 0x000000, sunInt: 2.0, ambInt: 0.05 }, // Final strike
-    { sun: 0xcccccc, ambient: 0x1a1a22, sunInt: 0.4, ambInt: 0.3 }, // Ending - silver
-  ];
+  lights.sun.color.setHex(palette.sun);
+  lights.sun.intensity = palette.sunInt;
+  lights.ambient.color.setHex(palette.ambient);
+  lights.ambient.intensity = palette.ambInt;
+  lights.rim.intensity = palette.rimInt;
+  lights.rim.color.setHex(phase > 3 ? 0xcc4030 : 0xffa060);
 
-  const current = palettes[Math.min(phase, palettes.length - 1)];
-  const next = palettes[Math.min(phase + 1, palettes.length - 1)];
+  lights.fill.intensity = phase <= 2.5 ? 0.55 : phase > 5 ? 0.15 : 0.25;
+  lights.fill.color.setHex(phase > 3 ? 0xff6030 : 0xffc878);
 
-  const sunColor = new THREE.Color(current.sun).lerp(new THREE.Color(next.sun), local);
-  const ambColor = new THREE.Color(current.ambient).lerp(new THREE.Color(next.ambient), local);
-
-  lights.sun.color.copy(sunColor);
-  lights.sun.intensity = THREE.MathUtils.lerp(current.sunInt, next.sunInt, local);
-  lights.ambient.color.copy(ambColor);
-  lights.ambient.intensity = THREE.MathUtils.lerp(current.ambInt, next.ambInt, local);
-
-  lights.rim.intensity = phase >= 3 ? 0.2 : 0.5;
-  lights.fill.intensity = phase <= 2 ? 0.6 : 0.2;
+  if (phase < 3.5) {
+    const sunHeight = THREE.MathUtils.lerp(6, 10, phase / 3.5);
+    lights.sun.position.set(14, sunHeight, 8);
+  } else if (phase < 5) {
+    lights.sun.position.set(6, 4, 4);
+  } else {
+    lights.sun.position.set(0, 12, 2);
+  }
 }

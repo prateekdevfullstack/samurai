@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { GOT } from './palette';
 import {
   createWindGrassMaterial,
   createFireMaterial,
@@ -50,7 +51,13 @@ export function createSamuraiSilhouette(): THREE.Group {
   group.name = 'samurai';
 
   const bodyMat = new THREE.MeshStandardMaterial({
-    color: 0x1a1a22,
+    color: GOT.robe,
+    roughness: 0.85,
+    metalness: 0.05,
+  });
+
+  const legMat = new THREE.MeshStandardMaterial({
+    color: GOT.hakama,
     roughness: 0.9,
     metalness: 0.1,
   });
@@ -78,17 +85,17 @@ export function createSamuraiSilhouette(): THREE.Group {
   group.add(rightArm);
 
   const legGeo = new THREE.CylinderGeometry(0.1, 0.08, 0.9, 6);
-  const leftLeg = new THREE.Mesh(legGeo, bodyMat);
+  const leftLeg = new THREE.Mesh(legGeo, legMat);
   leftLeg.position.set(-0.2, 0.45, 0);
   group.add(leftLeg);
 
-  const rightLeg = new THREE.Mesh(legGeo, bodyMat);
+  const rightLeg = new THREE.Mesh(legGeo, legMat);
   rightLeg.position.set(0.2, 0.45, 0);
   group.add(rightLeg);
 
   const capeGeo = new THREE.PlaneGeometry(1.2, 1.8, 12, 18);
   const capeMat = new THREE.MeshStandardMaterial({
-    color: 0x2a1520,
+    color: GOT.cape,
     side: THREE.DoubleSide,
     roughness: 0.95,
   });
@@ -105,7 +112,7 @@ export function createSamuraiSilhouette(): THREE.Group {
 export function createBambooForest(count = 120): THREE.InstancedMesh {
   const geo = new THREE.CylinderGeometry(0.08, 0.12, 8, 6);
   const mat = new THREE.MeshStandardMaterial({
-    color: 0x3a6a3a,
+    color: GOT.bamboo,
     roughness: 0.85,
     metalness: 0.05,
   });
@@ -135,7 +142,7 @@ export function createBambooForest(count = 120): THREE.InstancedMesh {
 export function createGrassField(count = 800): THREE.InstancedMesh {
   const geo = new THREE.PlaneGeometry(0.15, 0.8);
   geo.translate(0, 0.4, 0);
-  const mat = createWindGrassMaterial(0x4a7a3a, 0.25);
+  const mat = createWindGrassMaterial(GOT.grass, 0.3);
 
   const mesh = new THREE.InstancedMesh(geo, mat, count);
   const dummy = new THREE.Object3D();
@@ -155,7 +162,7 @@ export function createGrassField(count = 800): THREE.InstancedMesh {
   return mesh;
 }
 
-export function createGround(size = 60, color = 0x2a4a2a): THREE.Mesh {
+export function createGround(size = 60, color = GOT.ground): THREE.Mesh {
   const geo = new THREE.PlaneGeometry(size, size, 32, 32);
   const mat = new THREE.MeshStandardMaterial({ color, roughness: 0.95 });
   const ground = new THREE.Mesh(geo, mat);
@@ -167,9 +174,9 @@ export function createGround(size = 60, color = 0x2a4a2a): THREE.Mesh {
 export function createFogPlane(): THREE.Mesh {
   const geo = new THREE.PlaneGeometry(80, 30);
   const mat = new THREE.MeshBasicMaterial({
-    color: 0xc8d8c8,
+    color: GOT.fogGold,
     transparent: true,
-    opacity: 0.35,
+    opacity: 0.45,
     depthWrite: false,
   });
   const fog = new THREE.Mesh(geo, mat);
@@ -189,10 +196,10 @@ export function createParticleField(count = 200): THREE.Points {
   geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 
   const mat = new THREE.PointsMaterial({
-    color: 0xffd4a0,
-    size: 0.08,
+    color: GOT.guideWind,
+    size: 0.1,
     transparent: true,
-    opacity: 0.6,
+    opacity: 0.7,
     blending: THREE.AdditiveBlending,
     depthWrite: false,
   });
@@ -234,7 +241,7 @@ export function createRiver(): THREE.Mesh {
 export function createCherryTrees(count = 8): THREE.Group {
   const group = new THREE.Group();
   const trunkMat = new THREE.MeshStandardMaterial({ color: 0x3a2a1a, roughness: 0.9 });
-  const blossomMat = new THREE.MeshStandardMaterial({ color: 0xffb7c5, roughness: 0.8 });
+  const blossomMat = new THREE.MeshStandardMaterial({ color: GOT.sakura, roughness: 0.8 });
 
   for (let i = 0; i < count; i++) {
     const tree = new THREE.Group();
@@ -259,7 +266,7 @@ export function createCherryTrees(count = 8): THREE.Group {
 export function createMountains(): THREE.Group {
   const group = new THREE.Group();
   const mat = new THREE.MeshStandardMaterial({
-    color: 0x4a5a6a,
+    color: GOT.mountainFar,
     roughness: 0.95,
     fog: true,
   });
@@ -279,7 +286,7 @@ export function createMountains(): THREE.Group {
 
 export function createToriiGate(): THREE.Group {
   const group = new THREE.Group();
-  const mat = new THREE.MeshStandardMaterial({ color: 0x8b2020, roughness: 0.7 });
+  const mat = new THREE.MeshStandardMaterial({ color: GOT.torii, roughness: 0.65 });
 
   const pillarGeo = new THREE.BoxGeometry(0.3, 4, 0.3);
   const left = new THREE.Mesh(pillarGeo, mat);
@@ -303,7 +310,7 @@ export function createToriiGate(): THREE.Group {
 export function createBattleFlags(count = 500): THREE.InstancedMesh {
   const geo = new THREE.PlaneGeometry(0.8, 1.2);
   const mat = new THREE.MeshStandardMaterial({
-    color: 0x8b1a1a,
+    color: GOT.flag,
     side: THREE.DoubleSide,
     roughness: 0.9,
   });
@@ -340,7 +347,7 @@ export function createEmberParticles(count = 300): THREE.Points {
   geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 
   const mat = new THREE.PointsMaterial({
-    color: 0xff6622,
+    color: GOT.ember,
     size: 0.12,
     transparent: true,
     opacity: 0.8,

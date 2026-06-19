@@ -27,6 +27,7 @@ import {
   createSmokeMaterial,
   createFireMaterial,
 } from './proceduralAssets';
+import { lerpScenePalette, GOT } from './palette';
 import { collectShaderMaterials, updateShaders, type ShaderRegistry } from './shaderMaterials';
 
 export interface SceneState {
@@ -51,8 +52,8 @@ export class SceneManager {
   private embers: THREE.Points;
   private birds: THREE.Group;
   private sceneGroups: Record<string, THREE.Group> = {};
-  private fogColor = new THREE.Color(0xc8d8c8);
-  private backgroundColor = new THREE.Color(0x87a898);
+  private fogColor = new THREE.Color(GOT.fogGold);
+  private backgroundColor = new THREE.Color(GOT.skyDawn);
   private rainOverlay!: THREE.Mesh;
   private sakuraOverlay!: THREE.Mesh;
   private inkOverlay!: THREE.Mesh;
@@ -97,7 +98,7 @@ export class SceneManager {
   private buildWorld(): void {
     const dawn = new THREE.Group();
     dawn.name = 'scene1';
-    dawn.add(createGround(60, 0x2a4a2a));
+    dawn.add(createGround(60, GOT.ground));
     dawn.add(createGrassField());
     dawn.add(createBambooForest());
     dawn.add(createFogPlane());
@@ -133,7 +134,7 @@ export class SceneManager {
     const battlefield = new THREE.Group();
     battlefield.name = 'scene4';
     battlefield.visible = false;
-    battlefield.add(createGround(100, 0x3a2a2a));
+    battlefield.add(createGround(100, 0x3a2820));
     battlefield.add(createBattleFlags());
     battlefield.add(createEnemySilhouettes());
 
@@ -155,7 +156,7 @@ export class SceneManager {
     const duel = new THREE.Group();
     duel.name = 'scene5';
     duel.visible = false;
-    duel.add(createGround(30, 0x2a2020));
+    duel.add(createGround(30, 0x2a2018));
 
     const opponent = createSamuraiSilhouette();
     opponent.position.set(0, 0, -4);
@@ -229,29 +230,13 @@ export class SceneManager {
   }
 
   private updateEnvironment(phase: number): void {
-    const palettes = [
-      { bg: 0x87a898, fog: 0xc8d8c8, density: 0.025 },
-      { bg: 0x98a888, fog: 0xd8c8a8, density: 0.02 },
-      { bg: 0xc8a878, fog: 0xe8d8b8, density: 0.015 },
-      { bg: 0x4a3030, fog: 0x3a2a2a, density: 0.035 },
-      { bg: 0x3a2020, fog: 0x2a1a1a, density: 0.04 },
-      { bg: 0x0a0a0a, fog: 0x111111, density: 0.05 },
-      { bg: 0x1a1a22, fog: 0x2a2a33, density: 0.03 },
-    ];
+    const palette = lerpScenePalette(phase);
 
-    const idx = Math.min(Math.floor(phase), palettes.length - 1);
-    const next = palettes[Math.min(idx + 1, palettes.length - 1)];
-    const t = phase - idx;
-
-    this.backgroundColor.setHex(palettes[idx].bg).lerp(new THREE.Color(next.bg), t);
-    this.fogColor.setHex(palettes[idx].fog).lerp(new THREE.Color(next.fog), t);
+    this.backgroundColor.setHex(palette.bg);
+    this.fogColor.setHex(palette.fog);
     this.scene.background = this.backgroundColor;
     (this.scene.fog as THREE.FogExp2).color = this.fogColor;
-    (this.scene.fog as THREE.FogExp2).density = THREE.MathUtils.lerp(
-      palettes[idx].density,
-      next.density,
-      t
-    );
+    (this.scene.fog as THREE.FogExp2).density = palette.density;
   }
 
   private updateSceneVisibility(phase: number): void {
